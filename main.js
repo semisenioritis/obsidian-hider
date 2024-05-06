@@ -40,6 +40,9 @@ class Hider extends obsidian.Plugin {
             document.body.classList.toggle('hider-ribbon', this.settings.hideRibbon);
             document.body.classList.toggle('hider-status', this.settings.hideStatus);
             document.body.classList.toggle('hider-tabs', this.settings.hideTabs);
+
+            document.body.classList.toggle('hider-ribbon-tabs', this.settings.hideRibbonTabs);
+            
             document.body.classList.toggle('hider-scroll', this.settings.hideScroll);
             document.body.classList.toggle('hider-sidebar-buttons', this.settings.hideSidebarButtons);
             document.body.classList.toggle('hider-tooltips', this.settings.hideTooltips);
@@ -85,6 +88,19 @@ class Hider extends obsidian.Plugin {
                     this.refresh();
                 }
             });
+
+            this.addCommand({
+                id: 'toggle-hider-ribbon-tabs',
+                name: 'Toggle app ribbon and tab bar',
+                callback: () => {
+                    this.settings.hideRibbonTabs = !this.settings.hideRibbonTabs;
+                    this.settings.hideRibbon = !this.settings.hideRibbon;
+                    this.settings.hideTabs = !this.settings.hideTabs;
+                    this.saveData(this.settings);
+                    this.refresh();
+                }
+            });
+
             this.refresh();
         });
     }
@@ -106,6 +122,9 @@ const DEFAULT_SETTINGS = {
     hideRibbon: false,
     hideStatus: false,
     hideTabs: false,
+
+    hideRibbonTabs: false,
+    
     hideScroll: false,
     hideSidebarButtons: false,
     hideTooltips: false,
@@ -151,6 +170,18 @@ class HiderSettingTab extends obsidian.PluginSettingTab {
             this.plugin.saveData(this.plugin.settings);
             this.plugin.refresh();
         }));
+
+        new obsidian.Setting(containerEl)
+            .setName('Hide ribbon and tab bar')
+            .setDesc('Hides both the app ribbon and the tab bar')
+            .addToggle(toggle => toggle.setValue(this.plugin.settings.hideRibbonTabs)
+            .onChange((value) => {
+            this.plugin.settings.hideRibbon = value;
+            this.plugin.settings.hideTabs = value;
+            this.plugin.saveData(this.plugin.settings);
+            this.plugin.refresh();
+        }));
+        
         new obsidian.Setting(containerEl)
             .setName('Hide vault name')
             .setDesc('Hides the root folder name')
